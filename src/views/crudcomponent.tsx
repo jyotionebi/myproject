@@ -86,7 +86,7 @@ const CrudComponent = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Simple User Manager</h1>
+      <h1>User data</h1>
       
       {/* Form */}
       <div style={{ 

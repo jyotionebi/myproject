@@ -1,4 +1,3 @@
-// src/components/widgets/UserCard.tsx
 import React from 'react';
 import type { User } from '../../api/crud';
 import SimpleButton from './Button';

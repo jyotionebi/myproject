@@ -1,4 +1,3 @@
-// src/components/widgets/SimpleButton.tsx
 import React from 'react';
 
 interface SimpleButtonProps {
