@@ -1,3 +1,4 @@
+// src/components/widgets/UserCard.tsx
 import React from 'react';
 import type { User } from '../../api/crud';
 import SimpleButton from './Button';
@@ -10,17 +11,11 @@ interface UserCardProps {
 
 const UserCard: React.FC<UserCardProps> = ({ user, onEdit, onDelete }) => {
   return (
-    <div style={{
-      border: '1px solid #ccc',
-      padding: '15px',
-      margin: '10px 0',
-      borderRadius: '5px',
-      backgroundColor: '#100f0fff'
-    }}>
+    <div className="user-card">
       <h3>{user.name}</h3>
-      <p>Email: {user.email}</p>
-      <p>ID: {user.id || 'No ID'}</p>
-      <div>
+      <p><strong>Email:</strong> {user.email}</p>
+      <p><strong>ID:</strong> {user.id || 'No ID'}</p>
+      <div className="card-actions">
         <SimpleButton 
           text="Edit" 
           onClick={() => onEdit(user)} 

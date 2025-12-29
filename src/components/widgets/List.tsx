@@ -11,17 +11,17 @@ interface UserListProps {
 
 const UserList: React.FC<UserListProps> = ({ users, loading, onEdit, onDelete }) => {
   if (loading) {
-    return <p>Loading users...</p>;
+    return <p className="loading-text">Loading users...</p>;
   }
 
   if (users.length === 0) {
-    return <p>No users found.</p>;
+    return <p className="empty-text">No users found. Add your first user!</p>;
   }
 
   return (
     <div>
       <h2>Users ({users.length})</h2>
-      <table border={1} style={{ width: '100%', marginTop: '10px' }}>
+      <table className="user-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -37,16 +37,20 @@ const UserList: React.FC<UserListProps> = ({ users, loading, onEdit, onDelete })
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>
-                <SimpleButton 
-                  text="Edit" 
-                  onClick={() => onEdit(user)} 
-                  color="orange"
-                />
-                <SimpleButton 
-                  text="Delete" 
-                  onClick={() => user.id && onDelete(user.id)} 
-                  color="red"
-                />
+                <div className="action-buttons">
+                  <SimpleButton 
+                    text="Edit" 
+                    onClick={() => onEdit(user)} 
+                    variant="secondary"
+                    disabled={!user.id}
+                  />
+                  <SimpleButton 
+                    text="Delete" 
+                    onClick={() => user.id && onDelete(user.id)} 
+                    variant="danger"
+                    disabled={!user.id}
+                  />
+                </div>
               </td>
             </tr>
           ))}

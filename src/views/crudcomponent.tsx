@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getUsers, createUser, updateUser, deleteUser, type User } from '../api/crud';
 import SimpleButton from '../components/widgets/Button';
 import UserList from '../components/widgets/List';
@@ -11,49 +10,42 @@ const CrudComponent = () => {
   const [email, setEmail] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
 
-
-  useEffect(() => {
-    loadUsers();
-  }, []);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const response = await getUsers();
       setUsers(response.data);
     } catch (error) {
       console.error('Error loading users:', error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !email) {
       alert('Please enter name and email');
       return;
     }
 
-    const userData = { name, email };
-
     try {
       if (editingId) {
-        // Update existing user
-        await updateUser(editingId, { ...userData, id: editingId });
+        await updateUser(editingId, { name, email });
         alert('User updated!');
       } else {
-        // Create new user
-        await createUser(userData);
+        await createUser({ name, email });
         alert('User created!');
       }
-      
-      // Reset form
+
       setName('');
       setEmail('');
       setEditingId(null);
-      
-      // Reload users
       loadUsers();
     } catch (error) {
       console.error('Error saving user:', error);
@@ -63,18 +55,18 @@ const CrudComponent = () => {
   const handleEdit = (user: User) => {
     setName(user.name);
     setEmail(user.email);
-    setEditingId(user.id || null);
+    setEditingId(user.id ?? null);
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Delete this user?')) {
-      try {
-        await deleteUser(id);
-        loadUsers();
-        alert('User deleted!');
-      } catch (error) {
-        console.error('Error deleting user:', error);
-      }
+    if (!window.confirm('Delete this user?')) return;
+
+    try {
+      await deleteUser(id);
+      alert('User deleted!');
+      loadUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 
@@ -85,66 +77,58 @@ const CrudComponent = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>User data</h1>
-      
+    <div style={{ padding: 20 }}>
+      <h1>User Data</h1>
+
       {/* Form */}
-      <div style={{ 
-        border: '1px solid #ddd', 
-        padding: '20px', 
-        marginBottom: '20px',
-        borderRadius: '5px'
-      }}>
+      <div style={{ border: '1px solid #ddd', padding: 20, borderRadius: 6 }}>
         <h2>{editingId ? 'Edit User' : 'Add User'}</h2>
+
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '10px' }}>
-            <label>Name: </label>
+          <div style={{ marginBottom: 10 }}>
+            <label>Name</label>
             <input
-              type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              style={{ padding: '8px', marginLeft: '10px', width: '200px' }}
               placeholder="Enter name"
+              style={{ marginLeft: 10, padding: 8 }}
             />
           </div>
-          
-          <div style={{ marginBottom: '10px' }}>
-            <label>Email: </label>
+
+          <div style={{ marginBottom: 10 }}>
+            <label>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{ padding: '8px', marginLeft: '10px', width: '200px' }}
               placeholder="Enter email"
+              style={{ marginLeft: 10, padding: 8 }}
             />
           </div>
-          
-          <div>
-            <SimpleButton 
-              text={editingId ? 'Update User' : 'Add User'} 
-              type="submit"
-              color={editingId ? 'orange' : 'green'}
+
+          <SimpleButton
+            text={editingId ? 'Update User' : 'Add User'}
+            type="submit"
+            color={editingId ? 'orange' : 'green'}
+          />
+
+          {editingId && (
+            <SimpleButton
+              text="Cancel"
+              onClick={cancelEdit}
+              color="gray"
             />
-            
-            {editingId && (
-              <SimpleButton 
-                text="Cancel" 
-                onClick={cancelEdit}
-                color="gray"
-              />
-            )}
-          </div>
+          )}
         </form>
       </div>
-      
-      {/* User List */}
+
+      {/* List */}
       <UserList
         users={users}
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
-      
     </div>
   );
 };
