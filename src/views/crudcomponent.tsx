@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getUsers, createUser, updateUser, deleteUser, type User } from '../api/crud';
 import SimpleButton from '../components/widgets/Button';
-import UserList from '../components/widgets/list';
+import UserList from '../components/widgets/List';
 
 const CrudComponent = () => {
   const [users, setUsers] = useState<User[]>([]);

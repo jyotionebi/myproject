@@ -4,11 +4,13 @@ interface SimpleButtonProps {
   text: string;
   onClick?: () => void;
   color?: string;
+  type?: 'button' | 'submit' | 'reset';
 }
 
-const SimpleButton: React.FC<SimpleButtonProps> = ({ text, onClick, color = 'blue' }) => {
+const SimpleButton: React.FC<SimpleButtonProps> = ({ text, onClick, color = 'blue', type = 'button' }) => {
   return (
     <button
+      type={type}
       onClick={onClick}
       style={{
         backgroundColor: color,
